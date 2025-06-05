@@ -30,7 +30,11 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    role:{type: String, required: true },
+    role:{
+      type: mongoose.Schema.Types.ObjectId,
+      ref:"Role",
+      required: true 
+    },
     refreshToken: {
       type: String,
     },

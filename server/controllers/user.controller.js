@@ -151,7 +151,7 @@ const changeUserPassword = asyncHandler(async(req,res)=>{
   return res.status(200).json(new apiResponse(200,{}, "password changed successully"))
 })
 const getCurrentUser = asyncHandler(async(req, res) => {
-    return res.status(200).json(200, req.user, "Current user fetch successfully")
+    return res.status(200).json(new apiResponse(200, req.user, "Current user fetch successfully"))
 })
 const updateAccountDetails = asyncHandler(async(req, res) => {
     const {fullname, username} = req.body
@@ -180,7 +180,7 @@ const updateUserAvatar = asyncHandler(async(req, res) => {
       if(!avatar.url){
           throw new apiError(404,"Error on uploading avatar")
       }
-      await User.findByIdAndUpdate(
+      const user = await User.findByIdAndUpdate(
         req.user?._id,
         {
           $set:{
