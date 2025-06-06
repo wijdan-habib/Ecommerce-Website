@@ -4,6 +4,7 @@ import {apiError} from "../utils/apiErrors.js"
 import { cloudinaryFileUploader } from "../utils/Cloudinary.js";
 import { apiResponse } from "../utils/apiResponse.js";
 import jwt from "jsonwebtoken"
+import { Role } from "../models/role.model.js";
 
 const generateAccessAndRefreshToken = async(userId) =>{
 try {
@@ -25,6 +26,10 @@ const registerUser = asyncHandler(async (req, res) => {
     ){
         throw new apiError(500, "All field required")
     }
+     const roleExists = await Role.findById(role);
+  if (!roleExists) {
+    throw new apiError(400, "Invalid role selected");
+  }
     const existedUser = await User.findOne({
         $or : [{username}, {email}]
     })
@@ -45,7 +50,7 @@ const registerUser = asyncHandler(async (req, res) => {
     email,
     password,
     username: username.toLowerCase(),
-    role: role.toLowerCase(),
+    role,
    })
   const createdUser =  await User.findById(user._id).select(
     "-password -refreshToken"

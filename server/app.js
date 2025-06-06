@@ -12,7 +12,9 @@ app.use(cors());
 
 
 import userRouter from "./routes/user.router.js";
-
+import roleRouter from './routes/role.router.js'
 app.use("/api/v1/users", userRouter)
+app.use("/api/v1/roles", roleRouter)
+
 
 export {app}

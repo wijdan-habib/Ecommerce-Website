@@ -5,10 +5,12 @@ const roleSchema = mongoose.Schema({
         type: String,
         unique: true
     },
-   permission:{
-    type: mongoose.Schema.Types.objectId,
-    ref:'Permission'
-   }
+  permissions: [
+    {
+      type: mongoose.Schema.Types.ObjectId, // ✅ correct usage
+      ref: 'Permission',                    // ✅ should match model name
+    },
+  ],
 },{
     timestamps: true
 }
