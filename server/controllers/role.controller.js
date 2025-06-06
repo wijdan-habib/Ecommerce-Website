@@ -8,7 +8,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 const fetchRole = asyncHandler(async (req, res) =>{
     const roles = await Role.find().select("_id name")
     if(!roles){
-        throw new apiError(404, "no role found")
+        throw new apiError(404, "no role found during fetch")
     }
     res.status(200).json(new apiResponse(200, roles, "Roles fetched successfully"))
 })
@@ -53,14 +53,27 @@ const createRole = asyncHandler(async (req, res) => {
   res.status(201).json(new apiResponse(201, role, "Role created successfully"));
 });
 
-const updateRole = asyncHandler(async(req, res)=>{
-  const {name, permissions} = req.body
-  const role = await Role.findByIdAndUpdate(req.params.id, {name, permissions}, {new:true})
-  if(!role){
-    throw new apiError(404, "Role not found")
-    }
-    res.status(200).json(new apiResponse(200, role, "Role updated successfully"))
-})
+const removePermissionFromRole = asyncHandler(async (req, res) => {
+  const { roleId } = req.params;
+const { permissionIds } = req.body;
+
+if (!Array.isArray(permissionIds) || permissionIds.length === 0) {
+  throw new apiError(400, "At least one permission ID is required");
+}
+
+const role = await Role.findByIdAndUpdate(
+  roleId,
+  { $pull: { permissions: { $in: permissionIds } } },
+  { new: true }
+);
+  if (!role) {
+    throw new apiError(404, "Role not found");
+  }
+
+  res.status(200).json(new apiResponse(200, role, "Permission removed successfully"));
+});
+
+
 
 const deleteRole = asyncHandler(async(req, res)=> {
     const {id} = req.params
@@ -71,4 +84,4 @@ const deleteRole = asyncHandler(async(req, res)=> {
     res.status(200).json(new apiResponse(200, {}, "role deleted successfull"))
 })
 
-export {fetchRole, assignRoleToUser,createRole, updateRole, deleteRole}
+export {fetchRole, assignRoleToUser,createRole, removePermissionFromRole, deleteRole}

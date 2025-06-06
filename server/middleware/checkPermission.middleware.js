@@ -12,10 +12,11 @@ export const checkPermission = (requiredPermission) =>
       throw new apiError(401, "User not authenticated");
     }
 
-    const userRole = await Role.findById(user.role).populate('permissions');
+    const roleId = user.role._id || user.role;
 
+    const userRole = await Role.findById(roleId).populate('permissions');
     if (!userRole) {
-      throw new apiError(403, "User role not found");
+      throw new apiError(403, "User role not found during permission check");
     }
 
     const hasPermission = userRole.permissions.some(
